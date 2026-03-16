@@ -1,0 +1,114 @@
+export const textConfig = {
+    web_title: 'M-Pay',
+
+    // Shared / Common
+    Common_Back: '返回',
+    Common_Loading: '載入中...',
+    Common_ViewAll: '查看全部',
+
+    // Bottom Navigation
+    BottomNav_Home: '首頁',
+    BottomNav_Market: '市場',
+    BottomNav_Task: '任務',
+    BottomNav_Wallet: '錢包',
+    BottomNav_My: '我的',
+
+    // Page: Home
+    Home_PageTitle: '首頁控制台', // Used for PageHeader and Meta Title
+    // Home: BalanceCard
+    Home_Balance_TotalAssets: '總資產 (USDT)',
+    Home_Balance_TodayProfit: '今日收益',
+    Home_Balance_Available: '可用額度',
+    // Home: QuickActions
+    Home_Action_Deposit: '儲值',
+    Home_Action_Withdraw: '提現',
+    Home_Action_Scan: '掃一掃',
+    Home_Action_Pay: '付款',
+    // Home: ServiceGrid
+    Home_Service_Title: '金融服務',
+    Home_Service_C2C: 'C2C交易',
+    Home_Service_Task: '賞金任務',
+    Home_Service_Transfer: '轉帳',
+    Home_Service_Bill: '帳單',
+    // Home: TransactionList
+    Home_Transaction_Title: '最近交易',
+    Home_Transaction_ViewMore: '查看更多',
+
+    // Page: Market
+    Market_PageTitle: 'C2C 交易市場',
+    Market_Tab_Buy: '我要買',
+    Market_Tab_Sell: '我要賣',
+    Market_Filter_USDT: 'USDT',
+    Market_Filter_Amount: '金額',
+    Market_Filter_Payment: '支付方式',
+    Market_List_Price: '單價',
+    Market_List_Quantity: '數量',
+    Market_List_Limit: '限額',
+    Market_List_Trades: '成交',
+    Market_List_Rate: '成交率',
+    Market_Action_Buy: '購買',
+
+    // Page: Task
+    Task_PageTitle: '賞金任務列表',
+    Task_Tab_All: '全部',
+    Task_Tab_P2P: 'P2P兌換',
+    Task_Tab_C2C: 'C2C交易',
+    Task_Tab_Reward: '高額獎勵',
+    Task_Tab_Limit: '限額搶單',
+    Task_List_Reward: '獎勵',
+    Task_List_Fee: '服務費',
+    Task_Action_Accept: '立即承接',
+
+    // Page: Wallet
+    Wallet_PageTitle: '我的錢包',
+    Wallet_Action_ThirdTransfer: '轉帳到三方',
+    Wallet_Action_ThirdTransferDesc: '授權支付',
+    Wallet_Action_Deposit: '儲值',
+    Wallet_Action_DepositDesc: 'USDT/法幣',
+    Wallet_Section_RecentTransactions: '最近交易',
+
+    // Component: WalletCard
+    WalletCard_Level_Gold: '黃金會員 Gold VIP',
+    WalletCard_Level_Silver: '白銀會員 Silver VIP',
+    WalletCard_Level_Diamond: '鑽石會員 Diamond VIP',
+    WalletCard_Level_Black: '黑金會員 Black VIP',
+    WalletCard_Level_Member: '普通會員 Member',
+    WalletCard_Label_Premium: 'M-Pay Premium',
+    WalletCard_Label_TotalAssets: 'Total Assets',
+    WalletCard_Label_AuthDate: 'Auth Date',
+    WalletCard_Feature_FeeDiscount: '手續費 9折',
+    WalletCard_Feature_FastAudit: '急速審核',
+    WalletCard_Feature_Agent: '專屬客服',
+
+    // Page: ThirdPartyAuth
+    ThirdPartyAuth_PageTitle: '第三方支付授權',
+    ThirdPartyAuth_Merchant_Name: '全球積分商城',
+    ThirdPartyAuth_Merchant_Cert: '認證特約商戶',
+    ThirdPartyAuth_Label_Total: '支付總額',
+    ThirdPartyAuth_Label_DetailTitle: '支付詳情',
+    ThirdPartyAuth_Label_OrderContent: '訂單內容',
+    ThirdPartyAuth_Value_OrderContent: '跨境資產兌換',
+    ThirdPartyAuth_Label_Method: '交易方式',
+    ThirdPartyAuth_Value_Method: '我的錢包 (餘額)',
+    ThirdPartyAuth_Label_MerchantFlow: '商戶流水',
+    ThirdPartyAuth_Trust_Scan: '支付環境已通過安全掃瞄，資金受系統保護',
+    ThirdPartyAuth_Btn_Confirm: '確認支付',
+    ThirdPartyAuth_Disclaimer: '點擊確認支付即代表您同意《第三方支付協議》及《授權隱私政策》',
+
+    // Page: My
+    My_PageTitle: '我的',
+    My_User_Name: 'M-Pay 用戶',
+    My_User_Verified: '已實名',
+    My_User_Credit: '信用極好',
+    My_Menu_Security: '安全中心',
+    My_Menu_SecurityDesc: '修改密碼、設備管理',
+    My_Menu_Payment: '收款方式',
+    My_Menu_PaymentDesc: '銀行卡、微信、支付寶',
+    My_Menu_Lang: '語言設置',
+    My_Menu_LangDesc: '繁體中文',
+    My_Menu_Help: '幫助中心',
+    My_Menu_HelpDesc: '常見問題、聯繫客服',
+    My_Menu_About: '關於我們',
+    My_Menu_AboutDesc: '當前版本 v1.0.0',
+    My_Action_Logout: '登出',
+};
