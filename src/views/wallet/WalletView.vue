@@ -7,17 +7,13 @@ import TransactionList from '@/components/home/TransactionList.vue';
 import { textConfig } from '@/constants/textConfig';
 
 const router = useRouter();
-const currentTier = ref('black'); // Options: black, gold, silver, diamond
+const currentTier = ref('black');
 const loading = ref(true);
 
 onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000);
+  setTimeout(() => { loading.value = false; }, 1000);
 });
 
-// Mock data for wallet, reusing structure from Home
-// In a real app, this would come from a store or API
 const dummyBalance = {
   total: 12580.00,
   fiatEstimate: 90953.40,
@@ -27,34 +23,31 @@ const dummyBalance = {
 };
 
 const dummyTransactions = [
-  { id: 1, type: 'C2C 卖出', amount: '+ 5,000.00', status: 'completed', time: '14:30', date: '今天' },
-  { id: 2, type: '三方支付', amount: '- 1,280.00', status: 'completed', time: '12:15', date: '今天' },
-  { id: 3, type: '任务奖励', amount: '+ 150.00', status: 'completed', time: '09:45', date: '昨天' },
+  { id: 1, type: 'C2C 卖出',  amount: 5000.00,  flow: 'in',  desc: 'C2C 卖出',  status: 'completed', time: '14:30' },
+  { id: 2, type: '三方支付',  amount: 1280.00,  flow: 'out', desc: '三方支付',  status: 'completed', time: '12:15' },
+  { id: 3, type: '任务奖励',  amount: 150.00,   flow: 'in',  desc: '任务奖励',  status: 'completed', time: '09:45' },
 ];
 
-const goToThirdPartyAuth = () => {
-  router.push('/wallet/third-auth');
-};
+const goToThirdPartyAuth = () => { router.push('/wallet/third-auth'); };
 </script>
 
 <template>
-  <div class="min-h-screen text-[#101018] dark:text-white font-display bg-background-light dark:bg-background-dark pb-24">
+  <div
+    class="min-h-screen font-display pb-24"
+    style="background-color: var(--color-bg); color: var(--color-text);"
+  >
     <PageHeader :title="textConfig.Wallet_PageTitle">
       <template #left>
-        <!-- No back button on main tab pages usually, or could enable if desired. 
-             Home doesn't have one, it has avatar. 
-             Wallet is a main tab. Let's stick to Home style or simple title.
-             User request: "consistent with previously modified pages"
-             Home has Avatar (left) and Notification (right).
-             Let's replicate that for main tabs (Wallet, My).
-        -->
-        <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-           <span class="material-symbols-outlined text-primary dark:text-white">account_balance_wallet</span>
+        <div
+          class="flex size-10 shrink-0 items-center justify-center rounded-full"
+          style="background-color: var(--color-surface-alt);"
+        >
+          <span class="material-symbols-outlined" style="color: var(--color-primary);">account_balance_wallet</span>
         </div>
       </template>
       <template #right>
-        <button class="relative flex items-center justify-center">
-          <span class="material-symbols-outlined text-[#101018] dark:text-white pt-1">history</span>
+        <button class="relative flex items-center justify-center" aria-label="Transaction history">
+          <span class="material-symbols-outlined pt-1" style="color: var(--color-text);">history</span>
         </button>
       </template>
     </PageHeader>
@@ -66,42 +59,56 @@ const goToThirdPartyAuth = () => {
 
         <!-- Action Grid -->
         <div class="grid grid-cols-2 gap-4">
-          <button 
+          <button
             @click="goToThirdPartyAuth"
-            class="flex flex-col items-center justify-center bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 active:scale-95 transition-transform"
+            class="flex flex-col items-center justify-center p-4 rounded-xl shadow-sm border active:scale-95 transition-transform"
+            style="background-color: var(--color-surface); border-color: var(--color-border);"
           >
-            <div class="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-2">
-               <span class="material-symbols-outlined text-primary text-2xl">swap_horiz</span>
+            <div
+              class="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+              style="background-color: rgba(37,99,235,0.10);"
+            >
+              <span class="material-symbols-outlined text-2xl" style="color: var(--color-primary);">swap_horiz</span>
             </div>
-            <span class="font-bold text-sm">{{ textConfig.Wallet_Action_ThirdTransfer }}</span>
-            <span class="text-xs text-gray-400 mt-1">{{ textConfig.Wallet_Action_ThirdTransferDesc }}</span>
+            <span class="font-bold text-sm" style="color: var(--color-text);">{{ textConfig.Wallet_Action_ThirdTransfer }}</span>
+            <span class="text-xs mt-1" style="color: var(--color-text-muted);">{{ textConfig.Wallet_Action_ThirdTransferDesc }}</span>
           </button>
 
-           <button class="flex flex-col items-center justify-center bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 active:scale-95 transition-transform">
-            <div class="w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center mb-2">
-               <span class="material-symbols-outlined text-green-600 text-2xl">add_card</span>
+          <button
+            class="flex flex-col items-center justify-center p-4 rounded-xl shadow-sm border active:scale-95 transition-transform"
+            style="background-color: var(--color-surface); border-color: var(--color-border);"
+          >
+            <div
+              class="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+              style="background-color: rgba(16,185,129,0.10);"
+            >
+              <span class="material-symbols-outlined text-2xl" style="color: #059669;">add_card</span>
             </div>
-            <span class="font-bold text-sm">{{ textConfig.Wallet_Action_Deposit }}</span>
-            <span class="text-xs text-gray-400 mt-1">{{ textConfig.Wallet_Action_DepositDesc }}</span>
+            <span class="font-bold text-sm" style="color: var(--color-text);">{{ textConfig.Wallet_Action_Deposit }}</span>
+            <span class="text-xs mt-1" style="color: var(--color-text-muted);">{{ textConfig.Wallet_Action_DepositDesc }}</span>
           </button>
         </div>
 
         <!-- Transactions -->
-         <div class="space-y-4">
+        <div class="space-y-4">
           <div class="flex items-center justify-between">
-              <h3 class="font-bold text-lg">{{ textConfig.Wallet_Section_RecentTransactions }}</h3>
-              <span class="text-sm text-gray-400">{{ textConfig.Common_ViewAll }}</span>
+            <h3 class="font-bold text-lg" style="color: var(--color-text);">{{ textConfig.Wallet_Section_RecentTransactions }}</h3>
+            <span class="text-sm" style="color: var(--color-text-muted);">{{ textConfig.Common_ViewAll }}</span>
           </div>
-          <!-- Reusing TransactionList component logic or just simple list for now since TransactionList takes props -->
           <TransactionList :transactions="dummyTransactions" />
         </div>
       </van-skeleton>
     </main>
-    <!-- Full Screen Loading Overlay -->
-    <div v-if="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-background-light dark:bg-background-dark">
+
+    <!-- Loading Overlay -->
+    <div
+      v-if="loading"
+      class="fixed inset-0 z-50 flex items-center justify-center"
+      style="background-color: var(--color-bg);"
+    >
       <div class="flex flex-col items-center gap-2">
-         <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-         <p class="text-xs text-gray-500 font-medium">{{ textConfig.Common_Loading }}</p>
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2" style="border-color: var(--color-primary);"></div>
+        <p class="text-xs font-medium" style="color: var(--color-text-muted);">{{ textConfig.Common_Loading }}</p>
       </div>
     </div>
   </div>

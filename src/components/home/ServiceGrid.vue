@@ -1,46 +1,57 @@
 <script setup>
 import { textConfig } from '@/constants/textConfig';
 
-// Static services for now
 const services = [
-  { name: textConfig.Home_Service_C2C, icon: 'group', colorArg: 'blue' },
-  { name: textConfig.Home_Service_Task, icon: 'trophy', colorArg: 'amber' },
-  { name: textConfig.Home_Service_Transfer, icon: 'send', colorArg: 'indigo' },
-  { name: textConfig.Home_Service_Bill, icon: 'description', colorArg: 'emerald' }
+  { name: textConfig.Home_Service_C2C,      icon: 'group',       colorArg: 'blue'    },
+  { name: textConfig.Home_Service_Task,     icon: 'trophy',      colorArg: 'amber'   },
+  { name: textConfig.Home_Service_Transfer, icon: 'send',        colorArg: 'indigo'  },
+  { name: textConfig.Home_Service_Bill,     icon: 'description', colorArg: 'emerald' },
 ];
 
-// Helper for dynamic classes won't work easily with Tailwind v4 atomic compilation unless classes are full strings in code or safelisted.
-// Safest to write out the classes or use a map.
-// Based on code.html:
-// C2C: bg-blue-50 text-blue-600
-// Bounty: bg-amber-50 text-amber-600
-// Transfer: bg-indigo-50 text-indigo-600
-// Bill: bg-emerald-50 text-emerald-600
-
-const getColorClasses = (color) => {
-  const map = {
-    blue: { bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400' },
-    amber: { bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-600 dark:text-amber-400' },
-    indigo: { bg: 'bg-indigo-50 dark:bg-indigo-900/20', text: 'text-indigo-600 dark:text-indigo-400' },
-    emerald: { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-600 dark:text-emerald-400' }
-  };
-  return map[color] || map.blue;
+// Uses CSS-variable-safe inline styles so light/dark both work without
+// relying on Tailwind dark: variants that depend on the .dark class strategy.
+const colorMap = {
+  blue:    { bg: 'rgba(59,130,246,0.12)',  text: '#2563eb'  },
+  amber:   { bg: 'rgba(245,158,11,0.12)',  text: '#d97706'  },
+  indigo:  { bg: 'rgba(99,102,241,0.12)',  text: '#4f46e5'  },
+  emerald: { bg: 'rgba(16,185,129,0.12)',  text: '#059669'  },
 };
+
+const getBg   = (c) => colorMap[c]?.bg   ?? colorMap.blue.bg;
+const getText = (c) => colorMap[c]?.text ?? colorMap.blue.text;
 </script>
 
 <template>
   <div class="mb-6">
-    <h3 class="text-base font-bold mb-3 px-1">{{ textConfig.Home_Service_Title }}</h3>
+    <h3
+      class="text-base font-bold mb-3 px-1"
+      style="color: var(--color-text);"
+    >
+      {{ textConfig.Home_Service_Title }}
+    </h3>
+
     <div class="grid grid-cols-2 gap-3">
-      <div 
-        v-for="service in services" 
+      <div
+        v-for="service in services"
         :key="service.name"
-        class="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 transition-all hover:border-primary/30 cursor-pointer"
+        class="flex items-center gap-3 rounded-lg p-4 cursor-pointer transition-all"
+        style="
+          background-color: var(--color-surface);
+          border: 1px solid var(--color-border);
+        "
       >
-        <div :class="['p-2 rounded-lg', getColorClasses(service.colorArg).bg, getColorClasses(service.colorArg).text]">
+        <div
+          class="p-2 rounded-lg shrink-0"
+          :style="{ backgroundColor: getBg(service.colorArg), color: getText(service.colorArg) }"
+        >
           <span class="material-symbols-outlined">{{ service.icon }}</span>
         </div>
-        <h2 class="text-sm font-bold">{{ service.name }}</h2>
+        <h2
+          class="text-sm font-bold"
+          style="color: var(--color-text);"
+        >
+          {{ service.name }}
+        </h2>
       </div>
     </div>
   </div>

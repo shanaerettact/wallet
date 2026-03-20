@@ -6,87 +6,125 @@ import { textConfig } from '@/constants/textConfig';
 const loading = ref(true);
 
 onMounted(() => {
-  setTimeout(() => {
-    loading.value = false;
-  }, 1000);
+  setTimeout(() => { loading.value = false; }, 1000);
 });
 
 const menuItems = [
-  { icon: 'security', label: textConfig.My_Menu_Security, desc: textConfig.My_Menu_SecurityDesc },
-  { icon: 'credit_card', label: textConfig.My_Menu_Payment, desc: textConfig.My_Menu_PaymentDesc },
-  { icon: 'language', label: textConfig.My_Menu_Lang, desc: textConfig.My_Menu_LangDesc },
-  { icon: 'help', label: textConfig.My_Menu_Help, desc: textConfig.My_Menu_HelpDesc },
-  { icon: 'info', label: textConfig.My_Menu_About, desc: textConfig.My_Menu_AboutDesc },
+  { icon: 'security',    label: textConfig.My_Menu_Security, desc: textConfig.My_Menu_SecurityDesc },
+  { icon: 'credit_card', label: textConfig.My_Menu_Payment,  desc: textConfig.My_Menu_PaymentDesc  },
+  { icon: 'language',    label: textConfig.My_Menu_Lang,     desc: textConfig.My_Menu_LangDesc     },
+  { icon: 'help',        label: textConfig.My_Menu_Help,     desc: textConfig.My_Menu_HelpDesc     },
+  { icon: 'info',        label: textConfig.My_Menu_About,    desc: textConfig.My_Menu_AboutDesc    },
 ];
 </script>
 
 <template>
-  <div class="min-h-screen text-[#101018] dark:text-white font-display bg-background-light dark:bg-background-dark pb-24">
+  <div
+    class="min-h-screen font-display pb-24"
+    style="background-color: var(--color-bg); color: var(--color-text);"
+  >
     <PageHeader :title="textConfig.My_PageTitle">
-       <template #left>
-        <!-- Avatar/Profile Icon for main tab consistency -->
-        <div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-          <span class="material-symbols-outlined text-primary dark:text-white">person</span>
+      <template #left>
+        <div
+          class="flex size-10 shrink-0 items-center justify-center rounded-full"
+          style="background-color: var(--color-surface-alt);"
+        >
+          <span class="material-symbols-outlined" style="color: var(--color-primary);">person</span>
         </div>
       </template>
       <template #right>
-         <button class="relative flex items-center justify-center">
-          <span class="material-symbols-outlined text-[#101018] dark:text-white pt-1">settings</span>
+        <button
+          class="relative flex items-center justify-center"
+          aria-label="Settings"
+          style="color: var(--color-text);"
+        >
+          <span class="material-symbols-outlined pt-1">settings</span>
         </button>
       </template>
     </PageHeader>
 
     <main class="pt-24 px-4 space-y-6">
       <van-skeleton title avatar :row="6" :loading="loading">
+
         <!-- Profile Card -->
-        <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4">
-          <div class="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
-             <span class="material-symbols-outlined text-4xl text-gray-400">person</span>
-             <!-- <img src="..." /> -->
+        <div
+          class="p-6 rounded-2xl shadow-sm border flex items-center gap-4"
+          style="background-color: var(--color-surface); border-color: var(--color-border);"
+        >
+          <div
+            class="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden shrink-0"
+            style="background-color: var(--color-surface-alt);"
+          >
+            <span class="material-symbols-outlined text-4xl" style="color: var(--color-text-muted);">person</span>
           </div>
           <div class="flex-1">
-            <h2 class="text-xl font-bold">{{ textConfig.My_User_Name }}</h2>
-            <p class="text-sm text-gray-500 mt-1">UID: 88293019</p>
+            <h2 class="text-xl font-bold" style="color: var(--color-text);">{{ textConfig.My_User_Name }}</h2>
+            <p class="text-sm mt-1" style="color: var(--color-text-muted);">UID: 88293019</p>
             <div class="mt-2 flex gap-2">
-               <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded">{{ textConfig.My_User_Verified }}</span>
-               <span class="text-[10px] bg-green-500/10 text-green-600 px-2 py-0.5 rounded">{{ textConfig.My_User_Credit }}</span>
+              <span
+                class="text-[10px] px-2 py-0.5 rounded"
+                style="background-color: rgba(2,0,128,0.10); color: var(--color-primary);"
+              >{{ textConfig.My_User_Verified }}</span>
+              <span
+                class="text-[10px] px-2 py-0.5 rounded"
+                style="background-color: rgba(16,185,129,0.12); color: #059669;"
+              >{{ textConfig.My_User_Credit }}</span>
             </div>
           </div>
-          <span class="material-symbols-outlined text-gray-400">chevron_right</span>
+          <span class="material-symbols-outlined" style="color: var(--color-text-muted);">chevron_right</span>
         </div>
 
         <!-- Menu List -->
-        <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden px-2">
-          <div 
-            v-for="(item, index) in menuItems" 
+        <div
+          class="rounded-2xl shadow-sm border overflow-hidden px-2"
+          style="background-color: var(--color-surface); border-color: var(--color-border);"
+        >
+          <div
+            v-for="(item, index) in menuItems"
             :key="item.label"
-            class="flex items-center p-4 active:bg-gray-50 dark:active:bg-gray-800 transition-colors cursor-pointer"
-            :class="index !== menuItems.length - 1 ? 'border-b border-gray-50 dark:border-gray-800' : ''"
+            class="flex items-center p-4 transition-colors cursor-pointer"
+            :style="index !== menuItems.length - 1 ? 'border-bottom: 1px solid var(--color-border);' : ''"
           >
-            <div class="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-300 mr-4">
+            <div
+              class="w-10 h-10 rounded-full flex items-center justify-center mr-4"
+              style="background-color: var(--color-surface-alt); color: var(--color-text-muted);"
+            >
               <span class="material-symbols-outlined">{{ item.icon }}</span>
             </div>
             <div class="flex-1">
-              <p class="font-medium text-[#101018] dark:text-white">{{ item.label }}</p>
+              <p class="font-medium" style="color: var(--color-text);">{{ item.label }}</p>
             </div>
             <div class="flex items-center gap-2">
-               <span v-if="item.desc" class="text-xs text-gray-400">{{ item.desc }}</span>
-               <span class="material-symbols-outlined text-gray-300 text-lg">chevron_right</span>
+              <span v-if="item.desc" class="text-xs" style="color: var(--color-text-muted);">{{ item.desc }}</span>
+              <span class="material-symbols-outlined text-lg" style="color: var(--color-border);">chevron_right</span>
             </div>
           </div>
         </div>
-        
-        <!-- Logout Button -->
-         <button class="w-full py-4 text-red-500 font-medium bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 active:scale-98 transition-transform">
-           {{ textConfig.My_Action_Logout }}
-         </button>
+
+        <!-- Logout -->
+        <button
+          class="w-full py-4 font-medium rounded-xl shadow-sm border active:scale-[0.98] transition-transform"
+          style="
+            color: #dc2626;
+            background-color: var(--color-surface);
+            border-color: var(--color-border);
+          "
+        >
+          {{ textConfig.My_Action_Logout }}
+        </button>
+
       </van-skeleton>
     </main>
-    <!-- Full Screen Loading Overlay -->
-    <div v-if="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-background-light dark:bg-background-dark">
+
+    <!-- Loading Overlay -->
+    <div
+      v-if="loading"
+      class="fixed inset-0 z-50 flex items-center justify-center"
+      style="background-color: var(--color-bg);"
+    >
       <div class="flex flex-col items-center gap-2">
-         <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-         <p class="text-xs text-gray-500 font-medium">{{ textConfig.Common_Loading }}</p>
+        <div class="animate-spin rounded-full h-10 w-10 border-b-2" style="border-color: var(--color-primary);"></div>
+        <p class="text-xs font-medium" style="color: var(--color-text-muted);">{{ textConfig.Common_Loading }}</p>
       </div>
     </div>
   </div>

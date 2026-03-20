@@ -8,31 +8,61 @@ const handleAction = (action) => {
 </script>
 
 <template>
-  <div class="mb-6 bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+  <div
+    class="mb-6 rounded-xl p-4 shadow-sm border"
+    style="background-color: var(--color-surface); border-color: var(--color-border);"
+  >
     <div class="grid grid-cols-4 gap-2">
-      <div class="flex flex-col items-center gap-2 cursor-pointer" @click="handleAction(textConfig.Home_Action_Deposit)">
-        <div class="rounded-full bg-primary/10 p-3 text-primary dark:text-white transition-colors hover:bg-primary/20">
+      <div
+        class="flex flex-col items-center gap-2 cursor-pointer"
+        @click="handleAction(textConfig.Home_Action_Deposit)"
+      >
+        <div
+          class="rounded-full p-3 transition-colors"
+          style="background-color: var(--color-surface-alt); color: var(--color-primary);"
+        >
           <span class="material-symbols-outlined">add_circle</span>
         </div>
-        <p class="text-xs font-medium">{{ textConfig.Home_Action_Deposit }}</p>
+        <p class="text-xs font-medium" style="color: var(--color-text);">{{ textConfig.Home_Action_Deposit }}</p>
       </div>
-      <div class="flex flex-col items-center gap-2 cursor-pointer" @click="handleAction(textConfig.Home_Action_Withdraw)">
-        <div class="rounded-full bg-primary/10 p-3 text-primary dark:text-white transition-colors hover:bg-primary/20">
+
+      <div
+        class="flex flex-col items-center gap-2 cursor-pointer"
+        @click="handleAction(textConfig.Home_Action_Withdraw)"
+      >
+        <div
+          class="rounded-full p-3 transition-colors"
+          style="background-color: var(--color-surface-alt); color: var(--color-primary);"
+        >
           <span class="material-symbols-outlined">arrow_circle_up</span>
         </div>
-        <p class="text-xs font-medium">{{ textConfig.Home_Action_Withdraw }}</p>
+        <p class="text-xs font-medium" style="color: var(--color-text);">{{ textConfig.Home_Action_Withdraw }}</p>
       </div>
-      <div class="flex flex-col items-center gap-2 cursor-pointer" @click="handleAction(textConfig.Home_Action_Scan)">
-        <div class="rounded-full bg-primary/10 p-3 text-primary dark:text-white transition-colors hover:bg-primary/20">
+
+      <div
+        class="flex flex-col items-center gap-2 cursor-pointer"
+        @click="handleAction(textConfig.Home_Action_Scan)"
+      >
+        <div
+          class="rounded-full p-3 transition-colors"
+          style="background-color: var(--color-surface-alt); color: var(--color-primary);"
+        >
           <span class="material-symbols-outlined">qr_code_scanner</span>
         </div>
-        <p class="text-xs font-medium">{{ textConfig.Home_Action_Scan }}</p>
+        <p class="text-xs font-medium" style="color: var(--color-text);">{{ textConfig.Home_Action_Scan }}</p>
       </div>
-      <div class="flex flex-col items-center gap-2 cursor-pointer" @click="handleAction(textConfig.Home_Action_Pay)">
-        <div class="rounded-full bg-primary/10 p-3 text-primary dark:text-white transition-colors hover:bg-primary/20">
+
+      <div
+        class="flex flex-col items-center gap-2 cursor-pointer"
+        @click="handleAction(textConfig.Home_Action_Pay)"
+      >
+        <div
+          class="rounded-full p-3 transition-colors"
+          style="background-color: var(--color-surface-alt); color: var(--color-primary);"
+        >
           <span class="material-symbols-outlined">payments</span>
         </div>
-        <p class="text-xs font-medium">{{ textConfig.Home_Action_Pay }}</p>
+        <p class="text-xs font-medium" style="color: var(--color-text);">{{ textConfig.Home_Action_Pay }}</p>
       </div>
     </div>
   </div>

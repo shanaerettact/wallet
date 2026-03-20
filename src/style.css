@@ -172,10 +172,46 @@ h1 {
 :root .van-cell {
   background-color: var(--color-surface) !important;
   color: var(--color-text) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+:root .van-cell__value {
+  color: var(--color-text-muted) !important;
+}
+
+:root .van-cell__label {
+  color: var(--color-text-muted) !important;
 }
 
 :root .van-cell-group {
   background-color: var(--color-surface) !important;
+}
+
+:root .van-cell-group__title {
+  color: var(--color-text-muted) !important;
+  background-color: var(--color-bg) !important;
+}
+
+:root .van-skeleton {
+  background-color: transparent !important;
+}
+
+:root .van-skeleton__row,
+:root .van-skeleton__title,
+:root .van-skeleton__avatar {
+  background-color: var(--color-surface-alt) !important;
+}
+
+/* Input/Textarea focus ring */
+.form-input:focus {
+  outline: none;
+  ring: 2px solid var(--color-primary);
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(2, 0, 128, 0.08);
+}
+
+:root.dark .form-input:focus {
+  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
 }
 
 /* =====================================================
