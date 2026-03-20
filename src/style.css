@@ -2,29 +2,43 @@
 
 /* =====================================================
    DESIGN TOKENS — Light Mode (default)
+   =====================================================
+   Primary:    #2563eb  (vivid blue — readable on white, bright in light mode)
+   Accent:     #38bdf8  (sky blue)
+   Surfaces:   white / #f0f4ff / #e8edf8
+   Text:       #0f172a / #64748b
+   Border:     #dde3f0
    ===================================================== */
 :root {
   /* Brand */
-  --color-primary: #020080;
-  --color-primary-light: #2a27c9;
-  --color-accent: #4f8ef7;
+  --color-primary:       #2563eb;
+  --color-primary-light: #3b82f6;
+  --color-accent:        #38bdf8;
 
   /* Surfaces */
-  --color-bg: #f0f2f8;
-  --color-surface: #ffffff;
-  --color-surface-alt: #eef0f8;
+  --color-bg:          #f0f4ff;
+  --color-surface:     #ffffff;
+  --color-surface-alt: #e8edf8;
 
   /* Text */
-  --color-text: #101018;
-  --color-text-muted: #6b7280;
+  --color-text:         #0f172a;
+  --color-text-muted:   #64748b;
   --color-text-inverse: #ffffff;
 
   /* Borders */
-  --color-border: #e2e4ef;
+  --color-border: #dde3f0;
+
+  /* Card gradient — balance card, hero cards */
+  --color-card-from: #2563eb;
+  --color-card-to:   #1d4ed8;
+  --color-card-text: #ffffff;
 
   /* Background aliases used by Tailwind theme */
-  --color-background-light: #f0f2f8;
-  --color-background-dark: #0d0d1c;
+  --color-background-light: #f0f4ff;
+  --color-background-dark:  #0d0d1c;
+
+  /* Semantic semantic shadows */
+  --shadow-primary: 0 4px 16px rgba(37, 99, 235, 0.25);
 
   font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -39,30 +53,37 @@
    DESIGN TOKENS — Dark Mode
    ===================================================== */
 :root.dark {
-  --color-primary: #4f8ef7;
-  --color-primary-light: #7ab0fa;
-  --color-accent: #4f8ef7;
+  --color-primary:       #60a5fa;
+  --color-primary-light: #93c5fd;
+  --color-accent:        #38bdf8;
 
-  --color-bg: #0d0d1c;
-  --color-surface: #14142a;
+  --color-bg:          #0d0d1c;
+  --color-surface:     #14142a;
   --color-surface-alt: #1a1a35;
 
-  --color-text: #e8eaf6;
-  --color-text-muted: #8b93b8;
+  --color-text:         #e8eaf6;
+  --color-text-muted:   #8b93b8;
   --color-text-inverse: #0d0d1c;
 
   --color-border: #252550;
+
+  /* Card gradient — stays rich in dark mode */
+  --color-card-from: #1e3a8a;
+  --color-card-to:   #0f172a;
+  --color-card-text: #e8eaf6;
+
+  --shadow-primary: 0 4px 16px rgba(96, 165, 250, 0.20);
 }
 
 /* =====================================================
    TAILWIND THEME EXTENSION
    ===================================================== */
 @theme inline {
-  --color-primary: var(--color-primary);
-  --color-primary-light: var(--color-primary-light);
-  --color-accent: var(--color-accent);
-  --color-background-light: var(--color-background-light);
-  --color-background-dark: var(--color-background-dark);
+  --color-primary:           var(--color-primary);
+  --color-primary-light:     var(--color-primary-light);
+  --color-accent:            var(--color-accent);
+  --color-background-light:  var(--color-background-light);
+  --color-background-dark:   var(--color-background-dark);
   --font-display: "Inter", "sans-serif";
 }
 
@@ -124,6 +145,15 @@ h1 {
 }
 
 /* =====================================================
+   BALANCE / HERO CARD GRADIENT
+   Centralised here so both light & dark are one change
+   ===================================================== */
+.card-gradient {
+  background: linear-gradient(135deg, var(--color-card-from) 0%, var(--color-card-to) 100%);
+  color: var(--color-card-text);
+}
+
+/* =====================================================
    THEME TOGGLE BUTTON
    ===================================================== */
 .theme-toggle {
@@ -167,6 +197,11 @@ h1 {
 :root .van-nav-bar {
   background-color: var(--color-surface) !important;
   border-bottom: 1px solid var(--color-border) !important;
+  color: var(--color-text) !important;
+}
+
+:root .van-nav-bar__title {
+  color: var(--color-text) !important;
 }
 
 :root .van-cell {
@@ -202,16 +237,36 @@ h1 {
   background-color: var(--color-surface-alt) !important;
 }
 
+/* Vant popup */
+:root .van-popup {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+:root .van-password-input__security li {
+  background-color: var(--color-surface-alt) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* Vant number keyboard */
+:root .van-number-keyboard {
+  background-color: var(--color-surface-alt) !important;
+}
+
+:root .van-key {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
 /* Input/Textarea focus ring */
 .form-input:focus {
   outline: none;
-  ring: 2px solid var(--color-primary);
   border-color: var(--color-primary) !important;
-  box-shadow: 0 0 0 3px rgba(2, 0, 128, 0.08);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 :root.dark .form-input:focus {
-  box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
 }
 
 /* =====================================================
