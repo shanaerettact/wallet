@@ -192,6 +192,8 @@ h1 {
 
 :root .van-tabbar-item--active {
   color: var(--color-primary) !important;
+  background-color: var(--color-surface-alt) !important;
+  border-radius: 10px;
 }
 
 :root .van-nav-bar {

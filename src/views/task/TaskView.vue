@@ -186,8 +186,8 @@ const goToDetail = () => { router.push('/task/detail'); };
 
             <!-- Accept Button -->
             <button
-              class="w-full text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-              style="background-color: var(--color-primary);"
+              class="w-full font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+              style="background-color: var(--color-primary); color: var(--color-text-inverse); box-shadow: var(--shadow-primary);"
             >
               <span>{{ textConfig.Task_Action_Accept }}</span>
               <span class="material-symbols-outlined text-lg">chevron_right</span>

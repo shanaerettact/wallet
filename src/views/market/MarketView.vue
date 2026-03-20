@@ -196,8 +196,8 @@ const goToDetail = () => { router.push('/market/detail'); };
               </div>
             </div>
             <button
-              class="text-white px-6 py-2 rounded-lg text-sm font-bold active:scale-95 transition-transform shadow-md"
-              style="background-color: var(--color-primary); box-shadow: 0 4px 12px rgba(2,0,128,0.20);"
+              class="px-6 py-2 rounded-lg text-sm font-bold active:scale-95 transition-transform shadow-md"
+              style="color: #fff; background-color: var(--color-primary); box-shadow: 0 4px 12px rgba(2,0,128,0.20);"
             >
               {{ textConfig.Market_Action_Buy }}
             </button>

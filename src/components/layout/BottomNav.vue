@@ -70,9 +70,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-:deep(.van-tabbar-item--active) {
-  color: var(--color-primary) !important;
-}
 :deep(.van-tabbar) {
   background-color: var(--color-surface) !important;
   border-color: var(--color-border) !important;
