@@ -7,15 +7,16 @@ import router from './router';
 import './style.css';
 import 'vant/lib/index.css';
 
-// Vant components (Global registration for simplicity as requested 'VANT is fastest way')
+// Vant components
 import { Button, Tabbar, TabbarItem, Icon, NavBar, Grid, GridItem, Cell, CellGroup } from 'vant';
 
 const app = createApp(App);
+const pinia = createPinia();
 
-app.use(createPinia());
+app.use(pinia);
 app.use(router);
 
-// Register generic Vant components - can also use auto-import plugin usually but keeping it explicit here
+// Register Vant components
 app.use(Button);
 app.use(Tabbar);
 app.use(TabbarItem);
@@ -25,5 +26,10 @@ app.use(Grid);
 app.use(GridItem);
 app.use(Cell);
 app.use(CellGroup);
+
+// Initialize theme store early so dark class is applied before first render
+import { useThemeStore } from './stores/theme';
+const themeStore = useThemeStore(pinia);
+// applyTheme is called inside the store constructor, so dark class is set immediately
 
 app.mount('#app');

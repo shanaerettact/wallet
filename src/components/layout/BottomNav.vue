@@ -16,9 +16,6 @@ const updateActive = (path) => {
   } else if (path.startsWith('/my')) {
     active.value = 4;
   } else {
-    // Default to Home if root or unknown, checking exact match for root usually
-    // But since Home is '/', standard 'startsWith' / matches everything.
-    // So we put Home last as fallback or check explicit '/'
     if (path === '/' || path === '') {
       active.value = 0;
     }
@@ -35,7 +32,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <van-tabbar v-model="active" class="!fixed !bottom-0 !border-t !border-gray-100 dark:!border-gray-800 pb-safe w-full max-w-[480px] left-0 right-0 mx-auto">
+  <van-tabbar
+    v-model="active"
+    class="!fixed !bottom-0 !border-t pb-safe w-full max-w-[480px] left-0 right-0 mx-auto"
+  >
     <van-tabbar-item to="/">
       <template #icon>
         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
@@ -71,12 +71,10 @@ onMounted(() => {
 
 <style scoped>
 :deep(.van-tabbar-item--active) {
-  color: var(--color-primary);
+  color: var(--color-primary) !important;
 }
 :deep(.van-tabbar) {
-  background: white;
-}
-:root.dark :deep(.van-tabbar) {
-  background: #0f0f23;
+  background-color: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
 }
 </style>
