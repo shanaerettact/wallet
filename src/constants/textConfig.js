@@ -23,6 +23,9 @@ export const textConfig = {
     Home_Action_Deposit: '儲值',
     Home_Action_Withdraw: '提現',
     Home_Action_Scan: '掃一掃',
+    Home_Scan_Title: '掃描 QR 碼',
+    Home_Scan_Result: '掃描結果',
+    Home_Scan_Camera_Error: '無法開啟相機，請確認已授予權限',
     Home_Action_Pay: '付款',
     // Home: ServiceGrid
     Home_Service_Title: '金融服務',
