@@ -14,14 +14,12 @@ const showScanPopup = ref(false);
 let html5QrCode = null;
 
 const updateActive = (path) => {
-  if (path.startsWith('/task')) {
-    active.value = 2;
-  } else if (path.startsWith('/market')) {
+  if (path.startsWith('/market')) {
     active.value = 1;
   } else if (path.startsWith('/wallet')) {
-    active.value = 3;
+    active.value = 2;
   } else if (path.startsWith('/my')) {
-    active.value = 4;
+    active.value = 3;
   } else {
     if (path === '/' || path === '') {
       active.value = 0;
@@ -137,12 +135,6 @@ async function onScanPopupOpened() {
       </van-tabbar-item>
       <!-- Spacer for FAB -->
       <div class="fab-spacer"></div>
-      <van-tabbar-item to="/task">
-        <template #icon>
-          <span class="material-symbols-outlined">trophy</span>
-        </template>
-        <span class="text-[10px]">{{ textConfig.BottomNav_Task }}</span>
-      </van-tabbar-item>
       <van-tabbar-item to="/wallet">
         <template #icon>
           <span class="material-symbols-outlined">account_balance_wallet</span>
