@@ -1,16 +1,24 @@
 <script setup>
 import { ref, watch, onMounted, nextTick } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { showToast } from 'vant';
+import { useRoute } from 'vue-router';
+import { showToast, showConfirmDialog, showSuccessToast } from 'vant';
 import { Html5Qrcode } from 'html5-qrcode';
 import { textConfig } from '@/constants/textConfig';
 
 const SCANNER_ELEMENT_ID = 'bottom-nav-qr-reader';
+const PAY_MIN = 0.01;
+const PAY_MAX = 999_999_999.99;
+
+// Shift+click FAB: skip camera, treat as scanned MOCK_SCAN_PAYEE (remove when shipping)
+const MOCK_SCAN_PAYEE = 'mpay:recv:U-DEMO-001';
 
 const route = useRoute();
-const router = useRouter();
 const active = ref(0);
 const showScanPopup = ref(false);
+const showAmountPopup = ref(false);
+const scannedPayeeRaw = ref('');
+const payAmount = ref('');
+const scanHandled = ref(false);
 let html5QrCode = null;
 
 const updateActive = (path) => {
@@ -58,13 +66,101 @@ watch(showScanPopup, async (open) => {
   }
 });
 
+watch(showAmountPopup, (open) => {
+  if (!open) {
+    payAmount.value = '';
+    scannedPayeeRaw.value = '';
+    scanHandled.value = false;
+  }
+});
+
+function formatPayeePreview(raw) {
+  const s = String(raw ?? '').trim();
+  if (!s) return '—';
+  const max = 40;
+  if (s.length <= max) return s;
+  return `${s.slice(0, 18)}…${s.slice(-14)}`;
+}
+
+function onPayAmountUpdate(val) {
+  let v = String(val ?? '').replace(/[^\d.]/g, '');
+  const dot = v.indexOf('.');
+  if (dot !== -1) {
+    v = `${v.slice(0, dot + 1)}${v.slice(dot + 1).replace(/\./g, '')}`;
+  }
+  const [intPart = '', decPart = ''] = v.split('.');
+  payAmount.value = decPart.length ? `${intPart}.${decPart.slice(0, 2)}` : intPart;
+}
+
+function validatePayAmount() {
+  const s = payAmount.value.trim();
+  if (!s) return textConfig.Home_Scan_Amount_Empty;
+  if (s.endsWith('.')) return textConfig.Home_Scan_Amount_Invalid;
+  const num = Number(s);
+  if (!Number.isFinite(num)) return textConfig.Home_Scan_Amount_Invalid;
+  const dec = s.includes('.') ? s.split('.')[1] ?? '' : '';
+  if (dec.length > 2) return textConfig.Home_Scan_Amount_Decimals;
+  if (num < PAY_MIN) return textConfig.Home_Scan_Amount_Min;
+  if (num > PAY_MAX) return textConfig.Home_Scan_Amount_Max;
+  return null;
+}
+
+function closeAmountPopup() {
+  showAmountPopup.value = false;
+}
+
+async function submitScannedPay() {
+  const err = validatePayAmount();
+  if (err) {
+    showToast(err);
+    return;
+  }
+  const num = Number(payAmount.value);
+  const amountLabel = num.toLocaleString('zh-TW', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  try {
+    await showConfirmDialog({
+      title: textConfig.Home_Scan_Pay_Confirm_Title,
+      message: `${textConfig.Home_Scan_Pay_Confirm_Amount}${amountLabel} USDT\n${textConfig.Home_Scan_Pay_Confirm_Payee}${formatPayeePreview(scannedPayeeRaw.value)}\n\n${textConfig.Home_Scan_Pay_Confirm_Question}`,
+      confirmButtonText: textConfig.Home_Scan_Btn_Confirm,
+      cancelButtonText: textConfig.Common_Cancel,
+    });
+  } catch {
+    return;
+  }
+  showSuccessToast(textConfig.Home_Scan_Pay_Success);
+  closeAmountPopup();
+}
+
 const openQrScanner = () => {
+  showAmountPopup.value = false;
+  scanHandled.value = false;
   showScanPopup.value = true;
 };
 
 const closeQrScanner = () => {
   showScanPopup.value = false;
 };
+
+function afterQrDecoded(text) {
+  scanHandled.value = true;
+  scannedPayeeRaw.value = text;
+  payAmount.value = '';
+  closeQrScanner();
+  showAmountPopup.value = true;
+}
+
+function openMockScannedPayFlow() {
+  afterQrDecoded(MOCK_SCAN_PAYEE);
+}
+
+function onFabClick(e) {
+  if (e.shiftKey) {
+    e.preventDefault();
+    openMockScannedPayFlow();
+    return;
+  }
+  openQrScanner();
+}
 
 async function onScanPopupOpened() {
   await nextTick();
@@ -82,11 +178,13 @@ async function onScanPopupOpened() {
         },
       },
       (decodedText) => {
-        showToast({
-          message: `${textConfig.Home_Scan_Result}: ${decodedText}`,
-          duration: 3000,
-        });
-        closeQrScanner();
+        if (scanHandled.value) return;
+        const text = decodedText?.trim() ?? '';
+        if (!text) {
+          showToast(textConfig.Home_Scan_Qr_Empty);
+          return;
+        }
+        afterQrDecoded(text);
       },
       () => {}
     );
@@ -102,10 +200,11 @@ async function onScanPopupOpened() {
   <div class="bottom-nav-wrapper">
     <!-- Floating Action Button for Scan -->
     <button
-      @click="openQrScanner"
+      type="button"
+      @click="onFabClick"
       :class="[
         'fab-button',
-        { 'fab-active': showScanPopup }
+        { 'fab-active': showScanPopup || showAmountPopup }
       ]"
       aria-label="Scan QR Code"
     >
@@ -172,6 +271,41 @@ async function onScanPopupOpened() {
           class="flex-1 min-h-[220px] w-full rounded-lg overflow-hidden"
           style="background-color: var(--color-bg);"
         />
+      </div>
+    </van-popup>
+
+    <van-popup
+      v-model:show="showAmountPopup"
+      position="bottom"
+      round
+      :style="{ maxHeight: '85%' }"
+      :close-on-click-overlay="true"
+    >
+      <div class="flex flex-col gap-4 p-4 pb-safe box-border" style="background-color: var(--color-surface);">
+        <div class="flex justify-between items-center shrink-0">
+          <span class="text-base font-medium" style="color: var(--color-text);">{{ textConfig.Home_Scan_Pay_Title }}</span>
+          <span
+            class="material-symbols-outlined cursor-pointer p-1"
+            style="color: var(--color-text-muted);"
+            @click="closeAmountPopup"
+          >close</span>
+        </div>
+        <div class="rounded-lg p-3 text-sm space-y-1" style="background-color: var(--color-bg); color: var(--color-text-muted);">
+          <div>{{ textConfig.Home_Scan_Payee_Label }}</div>
+          <div class="font-medium break-all" style="color: var(--color-text);">{{ formatPayeePreview(scannedPayeeRaw) }}</div>
+        </div>
+        <van-field
+          :model-value="payAmount"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          :label="textConfig.Home_Scan_Amount_Label"
+          :placeholder="payAmount.trim() ? '' : textConfig.Home_Scan_Amount_Placeholder"
+          @update:model-value="onPayAmountUpdate"
+        />
+        <van-button type="primary" block round @click="submitScannedPay">
+          {{ textConfig.Home_Scan_Btn_Confirm }}
+        </van-button>
       </div>
     </van-popup>
   </div>
@@ -308,6 +442,23 @@ async function onScanPopupOpened() {
 .fab-active .fab-scan-lines {
   opacity: 1;
   animation: scan-line 1.5s linear infinite;
+}
+
+:deep(.van-field__label) {
+  color: #727272;
+}
+
+:deep(.van-field__control) {
+  color: #4e4e4e;
+
+  &::placeholder {
+    color: #4e4e4e;
+    opacity: 1;
+  }
+}
+
+:deep(.van-field__error-message) {
+  color: #ff0000;
 }
 
 @keyframes pulse {

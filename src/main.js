@@ -8,7 +8,7 @@ import './style.css';
 import 'vant/lib/index.css';
 
 // Vant components
-import { Button, Tabbar, TabbarItem, Icon, NavBar, Grid, GridItem, Cell, CellGroup, Popup } from 'vant';
+import { Button, Tabbar, TabbarItem, Icon, NavBar, Grid, GridItem, Cell, CellGroup, Popup, Field } from 'vant';
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -27,6 +27,7 @@ app.use(GridItem);
 app.use(Cell);
 app.use(CellGroup);
 app.use(Popup);
+app.use(Field);
 
 // Initialize theme store early so dark class is applied before first render
 import { useThemeStore } from './stores/theme';

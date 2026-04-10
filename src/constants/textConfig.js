@@ -3,6 +3,7 @@ export const textConfig = {
 
     // Shared / Common
     Common_Back: '返回',
+    Common_Cancel: '取消',
     Common_Loading: '載入中...',
     Common_ViewAll: '查看全部',
 
@@ -26,6 +27,22 @@ export const textConfig = {
     Home_Scan_Title: '掃描 QR 碼',
     Home_Scan_Result: '掃描結果',
     Home_Scan_Camera_Error: '無法開啟相機，請確認已授予權限',
+    Home_Scan_Pay_Title: '請輸入付款金額',
+    Home_Scan_Payee_Label: '收款資訊',
+    Home_Scan_Amount_Label: '金額 (USDT)',
+    Home_Scan_Amount_Placeholder: '例如 100.00',
+    Home_Scan_Amount_Empty: '請輸入金額',
+    Home_Scan_Amount_Invalid: '請輸入有效的數字金額',
+    Home_Scan_Amount_Min: '金額至少 0.01 USDT',
+    Home_Scan_Amount_Max: '金額超過上限',
+    Home_Scan_Amount_Decimals: '最多兩位小數',
+    Home_Scan_Qr_Empty: 'QR 內容為空，請重新掃描',
+    Home_Scan_Btn_Confirm: '確認付款',
+    Home_Scan_Pay_Confirm_Title: '再次確認',
+    Home_Scan_Pay_Confirm_Amount: '付款金額：',
+    Home_Scan_Pay_Confirm_Payee: '收款方：',
+    Home_Scan_Pay_Confirm_Question: '確定要送出此付款？',
+    Home_Scan_Pay_Success: '付款請求已送出',
     Home_Action_Pay: '付款',
     // Home: ServiceGrid
     Home_Service_Title: '金融服務',
