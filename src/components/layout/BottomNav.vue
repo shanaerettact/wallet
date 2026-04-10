@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, nextTick } from 'vue';
+import { ref, watch, onMounted, nextTick, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { showToast, showConfirmDialog, showSuccessToast } from 'vant';
 import { Html5Qrcode } from 'html5-qrcode';
@@ -11,15 +11,23 @@ const PAY_MAX = 999_999_999.99;
 
 // Shift+click FAB: skip camera, treat as scanned MOCK_SCAN_PAYEE (remove when shipping)
 const MOCK_SCAN_PAYEE = 'mpay:recv:U-DEMO-001';
+// Temp: payload in QR until backend provides real user id
+const MY_RECEIVE_QR_PAYLOAD = 'mpay:user:self-U-TEMP-001';
 
 const route = useRoute();
 const active = ref(0);
 const showScanPopup = ref(false);
 const showAmountPopup = ref(false);
+const showMyQrPopup = ref(false);
 const scannedPayeeRaw = ref('');
 const payAmount = ref('');
 const scanHandled = ref(false);
 let html5QrCode = null;
+
+const myQrImageUrl = computed(() => {
+  const q = encodeURIComponent(MY_RECEIVE_QR_PAYLOAD);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=10&color=0f172a&bgcolor=ffffff&data=${q}`;
+});
 
 const updateActive = (path) => {
   if (path.startsWith('/market')) {
@@ -71,6 +79,7 @@ watch(showAmountPopup, (open) => {
     payAmount.value = '';
     scannedPayeeRaw.value = '';
     scanHandled.value = false;
+    showMyQrPopup.value = false;
   }
 });
 
@@ -107,6 +116,14 @@ function validatePayAmount() {
 
 function closeAmountPopup() {
   showAmountPopup.value = false;
+}
+
+function openMyQrPopup() {
+  showMyQrPopup.value = true;
+}
+
+function closeMyQrPopup() {
+  showMyQrPopup.value = false;
 }
 
 async function submitScannedPay() {
@@ -282,13 +299,25 @@ async function onScanPopupOpened() {
       :close-on-click-overlay="true"
     >
       <div class="flex flex-col gap-4 p-4 pb-safe box-border" style="background-color: var(--color-surface);">
-        <div class="flex justify-between items-center shrink-0">
-          <span class="text-base font-medium" style="color: var(--color-text);">{{ textConfig.Home_Scan_Pay_Title }}</span>
-          <span
-            class="material-symbols-outlined cursor-pointer p-1"
-            style="color: var(--color-text-muted);"
-            @click="closeAmountPopup"
-          >close</span>
+        <div class="flex justify-between items-center shrink-0 gap-2">
+          <span class="text-base font-medium flex-1 min-w-0" style="color: var(--color-text);">{{ textConfig.Home_Scan_Pay_Title }}</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              class="amount-popup-qr-btn"
+              :aria-label="textConfig.Home_Scan_Show_My_Qr_A11y"
+              @click="openMyQrPopup"
+            >
+              <span class="material-symbols-outlined amount-popup-qr-icon">qr_code_2</span>
+              <span>我的收款碼</span>
+
+            </button>
+            <span
+              class="material-symbols-outlined cursor-pointer p-1"
+              style="color: var(--color-text-muted);"
+              @click="closeAmountPopup"
+            >close</span>
+          </div>
         </div>
         <div class="rounded-lg p-3 text-sm space-y-1" style="background-color: var(--color-bg); color: var(--color-text-muted);">
           <div>{{ textConfig.Home_Scan_Payee_Label }}</div>
@@ -308,12 +337,89 @@ async function onScanPopupOpened() {
         </van-button>
       </div>
     </van-popup>
+
+    <van-popup
+      v-model:show="showMyQrPopup"
+      position="center"
+      round
+      :style="{ width: 'min(320px, 88vw)' }"
+      :close-on-click-overlay="true"
+    >
+      <div class="p-5 flex flex-col items-center gap-3 box-border" style="background-color: var(--color-surface);">
+        <span class="text-base font-semibold text-center" style="color: var(--color-text);">{{ textConfig.Home_Scan_My_Qr_Title }}</span>
+
+        <div class="my-qr-frame">
+          <img
+            :src="myQrImageUrl"
+            alt=""
+            width="240"
+            height="240"
+            class="my-qr-img"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <p class="text-xs text-center leading-relaxed px-1 m-0" style="color: var(--color-text-muted);">{{ textConfig.Home_Scan_My_Qr_Hint }}</p>
+        <van-button block round @click="closeMyQrPopup">
+          {{ textConfig.Common_Back }}
+        </van-button>
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <style scoped>
 .bottom-nav-wrapper {
   position: relative;
+}
+
+.amount-popup-qr-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
+  padding: 5px0;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(56, 189, 248, 0.08) 100%);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.12);
+}
+
+.amount-popup-qr-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.18);
+}
+
+.amount-popup-qr-btn:active {
+  transform: scale(0.97);
+}
+
+:root.dark .amount-popup-qr-btn {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.16) 0%, rgba(56, 189, 248, 0.1) 100%);
+  box-shadow: 0 1px 4px rgba(96, 165, 250, 0.12);
+}
+
+.amount-popup-qr-icon {
+  font-size: 22px;
+  font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+.my-qr-frame {
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+}
+
+.my-qr-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
 /* Floating Action Button */

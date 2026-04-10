@@ -43,6 +43,9 @@ export const textConfig = {
     Home_Scan_Pay_Confirm_Payee: '收款方：',
     Home_Scan_Pay_Confirm_Question: '確定要送出此付款？',
     Home_Scan_Pay_Success: '付款請求已送出',
+    Home_Scan_Show_My_Qr_A11y: '顯示我的收款 QR 碼',
+    Home_Scan_My_Qr_Title: '我的收款 QR 碼',
+    Home_Scan_My_Qr_Hint: '請對方掃描此碼向您付款（暫用示範內容）',
     Home_Action_Pay: '付款',
     // Home: ServiceGrid
     Home_Service_Title: '金融服務',
