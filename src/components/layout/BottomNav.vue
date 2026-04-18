@@ -22,7 +22,73 @@ const showMyQrPopup = ref(false);
 const scannedPayeeRaw = ref('');
 const payAmount = ref('');
 const scanHandled = ref(false);
+const scanCameraStarting = ref(false);
 let html5QrCode = null;
+
+function waitNextAnimationFrames(count = 2) {
+  return new Promise((resolve) => {
+    const step = (n) => {
+      if (n <= 0) resolve();
+      else requestAnimationFrame(() => step(n - 1));
+    };
+    step(count);
+  });
+}
+
+function buildQrboxFunction() {
+  return (w, h) => {
+    const vw = Number(w) || 0;
+    const vh = Number(h) || 0;
+    const edge = Math.max(1, Math.min(vw, vh));
+    const size = Math.max(120, Math.floor(edge * 0.65));
+    return { width: size, height: size };
+  };
+}
+
+/* getUserMedia must run during the tap; iOS / many WebViews reject delayed camera access. */
+const GUM_PRIMER_CONSTRAINTS = [
+  { video: { facingMode: { ideal: 'environment' } } },
+  { video: { facingMode: 'environment' } },
+  { video: { facingMode: { ideal: 'user' } } },
+  { video: { facingMode: 'user' } },
+  { video: true },
+];
+
+async function primeCameraFromUserGesture() {
+  const md = navigator.mediaDevices;
+  if (!md?.getUserMedia) return false;
+  for (const c of GUM_PRIMER_CONSTRAINTS) {
+    try {
+      const stream = await md.getUserMedia(c);
+      stream.getTracks().forEach((t) => t.stop());
+      return true;
+    } catch {
+      /* try next */
+    }
+  }
+  return false;
+}
+
+async function tryStartScannerWithConfig(cameraConfig) {
+  const qrbox = buildQrboxFunction();
+  await html5QrCode.start(
+    cameraConfig,
+    {
+      fps: 10,
+      qrbox,
+    },
+    (decodedText) => {
+      if (scanHandled.value) return;
+      const text = decodedText?.trim() ?? '';
+      if (!text) {
+        showToast(textConfig.Home_Scan_Qr_Empty);
+        return;
+      }
+      afterQrDecoded(text);
+    },
+    () => {}
+  );
+}
 
 const myQrImageUrl = computed(() => {
   const q = encodeURIComponent(MY_RECEIVE_QR_PAYLOAD);
@@ -170,45 +236,79 @@ function openMockScannedPayFlow() {
   afterQrDecoded(MOCK_SCAN_PAYEE);
 }
 
-function onFabClick(e) {
+async function onFabClick(e) {
   if (e.shiftKey) {
     e.preventDefault();
     openMockScannedPayFlow();
     return;
   }
+  if (typeof window !== 'undefined' && window.isSecureContext === false) {
+    showToast(textConfig.Home_Scan_Camera_Requires_Https);
+    return;
+  }
+  const ok = await primeCameraFromUserGesture();
+  if (!ok) {
+    showToast(textConfig.Home_Scan_Camera_Error);
+    return;
+  }
   openQrScanner();
 }
 
-async function onScanPopupOpened() {
-  await nextTick();
-  await cleanupScanner();
-  try {
-    html5QrCode = new Html5Qrcode(SCANNER_ELEMENT_ID);
-    await html5QrCode.start(
-      { facingMode: 'environment' },
-      {
-        fps: 10,
-        qrbox: (w, h) => {
-          const edge = Math.min(w, h);
-          const size = Math.floor(edge * 0.65);
-          return { width: size, height: size };
-        },
-      },
-      (decodedText) => {
-        if (scanHandled.value) return;
-        const text = decodedText?.trim() ?? '';
-        if (!text) {
-          showToast(textConfig.Home_Scan_Qr_Empty);
-          return;
-        }
-        afterQrDecoded(text);
-      },
-      () => {}
-    );
-  } catch (err) {
-    console.error(err);
+async function onScanPopupOpen() {
+  if (scanCameraStarting.value) return;
+  if (!navigator.mediaDevices?.getUserMedia) {
     showToast(textConfig.Home_Scan_Camera_Error);
     showScanPopup.value = false;
+    return;
+  }
+  scanCameraStarting.value = true;
+  let lastErr = null;
+  try {
+    await nextTick();
+    await waitNextAnimationFrames(2);
+    await cleanupScanner();
+    const host = document.getElementById(SCANNER_ELEMENT_ID);
+    if (!host?.isConnected) {
+      showToast(textConfig.Home_Scan_Camera_Error);
+      showScanPopup.value = false;
+      return;
+    }
+    const cameraAttempts = [];
+    try {
+      const devices = await Html5Qrcode.getCameras();
+      if (devices?.length) {
+        const back = devices.find((d) => /back|rear|environment|wide/i.test(d.label));
+        const chosen = back ?? devices[0];
+        if (chosen?.id) {
+          cameraAttempts.push(chosen.id);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    cameraAttempts.push(
+      { facingMode: 'environment' },
+      { facingMode: { exact: 'environment' } },
+      { facingMode: 'user' }
+    );
+    for (const cfg of cameraAttempts) {
+      try {
+        html5QrCode = new Html5Qrcode(SCANNER_ELEMENT_ID);
+        await tryStartScannerWithConfig(cfg);
+        lastErr = null;
+        break;
+      } catch (err) {
+        lastErr = err;
+        await cleanupScanner();
+      }
+    }
+    if (lastErr) {
+      console.error(lastErr);
+      showToast(textConfig.Home_Scan_Camera_Error);
+      showScanPopup.value = false;
+    }
+  } finally {
+    scanCameraStarting.value = false;
   }
 }
 </script>
@@ -270,18 +370,31 @@ async function onScanPopupOpened() {
       v-model:show="showScanPopup"
       position="bottom"
       round
+      teleport="body"
+      :lazy-render="false"
       :style="{ height: '78%' }"
       :close-on-click-overlay="true"
-      @opened="onScanPopupOpened"
+      @open="onScanPopupOpen"
     >
       <div class="flex flex-col h-full min-h-0 p-4 box-border" style="background-color: var(--color-surface);">
-        <div class="flex justify-between items-center shrink-0 mb-3">
-          <span class="text-base font-medium" style="color: var(--color-text);">{{ textConfig.Home_Scan_Title }}</span>
-          <span
-            class="material-symbols-outlined cursor-pointer p-1"
-            style="color: var(--color-text-muted);"
-            @click="closeQrScanner"
-          >close</span>
+        <div class="flex justify-between items-center shrink-0 gap-2 mb-3">
+          <span class="text-base font-medium flex-1 min-w-0" style="color: var(--color-text);">{{ textConfig.Home_Scan_Title }}</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              class="amount-popup-qr-btn"
+              :aria-label="textConfig.Home_Scan_Show_My_Qr_A11y"
+              @click="openMyQrPopup"
+            >
+              <span class="material-symbols-outlined amount-popup-qr-icon">qr_code_2</span>
+              我的收款碼
+            </button>
+            <span
+              class="material-symbols-outlined cursor-pointer p-1"
+              style="color: var(--color-text-muted);"
+              @click="closeQrScanner"
+            >close</span>
+          </div>
         </div>
         <div
           :id="SCANNER_ELEMENT_ID"
